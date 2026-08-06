@@ -5,7 +5,6 @@ import { getFrontendComponents } from '@ministryofjustice/hmpps-connect-dps-comp
 
 import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
-import { appInsightsMiddleware } from './utils/azureAppInsights'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
 
 import setUpAuthentication from './middleware/setUpAuthentication'
@@ -25,6 +24,7 @@ import auditMiddleware from './middleware/auditMiddleware'
 import successMessageMiddleware from './middleware/successMessageMiddleware'
 import errorMessageMiddleware from './middleware/errorMessageMiddleware'
 import apiErrorMiddleware from './middleware/apiErrorMiddleware'
+import addUsernameAndCaseloadToTelemetry from './utils/appInsightsCustomTelemetry'
 
 export default function createApp(services: Services): express.Application {
   const app = express()
@@ -33,7 +33,7 @@ export default function createApp(services: Services): express.Application {
   app.set('trust proxy', true)
   app.set('port', process.env.PORT || 3000)
 
-  app.use(appInsightsMiddleware())
+  app.use(addUsernameAndCaseloadToTelemetry())
   app.use(setUpHealthChecks(services.applicationInfo))
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
